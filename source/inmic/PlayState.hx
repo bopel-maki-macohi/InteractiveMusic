@@ -95,7 +95,7 @@ class PlayState extends FlxState
 		super.update(elapsed);
 
 		if (FlxG.keys.justPressed.ESCAPE) togglePaused();
-		if (FlxG.keys.justPressed.F7) toggleEditorMode();
+		if (FlxG.keys.justPressed.SEVEN) toggleEditorMode();
 
 		if (EDITOR_MODE && !IN_PROMPT)
 		{
