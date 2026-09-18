@@ -1,8 +1,6 @@
 package inmic;
 
 import flixel.util.typeLimit.NextState.InitialState;
-import js.html.Document;
-import openfl.events.Event;
 import flixel.FlxGame;
 
 class Main extends FlxGame

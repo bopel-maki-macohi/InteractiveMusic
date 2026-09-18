@@ -18,14 +18,14 @@ class PlayState extends FlxState
 
 	function get_songTime():Float
 	{
-		return (songSoundChannel == null) ? 0 : songSoundChannel.position / 1000;
+		return (songSoundChannel == null) ? 0 : songSoundChannel.position;
 	}
 
 	var songLength(get, null):Float;
 
 	function get_songLength():Float
 	{
-		return (song == null) ? 0 : song.length / 1000;
+		return (song == null) ? 0 : song.length;
 	}
 
 	var timeBar:FlxBar;
