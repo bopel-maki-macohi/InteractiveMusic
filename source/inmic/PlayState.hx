@@ -1,5 +1,7 @@
 package inmic;
 
+import flixel.FlxSprite;
+import flixel.group.FlxSpriteContainer;
 import flixel.sound.FlxSound;
 import lime.media.AudioSource;
 import flixel.math.FlxMath;
@@ -23,6 +25,8 @@ class PlayState extends FlxState
 
 	function get_editorShifting():Bool return editorShiftTick >= editorShiftTickThreshold;
 
+	var editorEventMarkers:FlxSpriteContainer;
+
 	var EDITOR_MODE:Bool = false;
 
 	var PAUSED:Bool = false;
@@ -40,6 +44,21 @@ class PlayState extends FlxState
 
 	function get_songLengthMS():Float return (song == null) ? 0 : song.length;
 
+	var songEventMarkers = [
+		{
+			time: 2500,
+			event: 'intro'
+		},
+		{
+			time: 5000,
+			event: 'outtro'
+		},
+		{
+			time: 10000,
+			event: 'what'
+		}
+	];
+
 	var timeBar:FlxBar;
 	var timeText:FlxText;
 
@@ -52,6 +71,8 @@ class PlayState extends FlxState
 
 		add(timeBar = new FlxBar(0, 0, LEFT_TO_RIGHT, FlxG.width, 16, this, 'songTimeMS', 0, songLengthMS, false));
 		timeBar.createFilledBar(0xFF000000, 0xFF00FF00);
+
+		add(editorEventMarkers = new FlxSpriteContainer());
 
 		add(timeText = new FlxText());
 
@@ -67,11 +88,11 @@ class PlayState extends FlxState
 
 		if (EDITOR_MODE)
 		{
-            if (FlxG.keys.justPressed.SPACE)
-            {
-                if (song.playing) song.pause();
-                else song.play();
-            }
+			if (FlxG.keys.justPressed.SPACE)
+			{
+				if (song.playing) song.pause();
+				else song.play();
+			}
 
 			if (!song.playing) editorTimeShifting();
 		}
@@ -110,9 +131,12 @@ class PlayState extends FlxState
 	{
 		updatePaused();
 
+		editorEventMarkers.alpha = (EDITOR_MODE) ? 1 : 0.001;
 		timeText.alpha = (EDITOR_MODE) ? 0.75 : 0.001;
 
 		editorShiftTick = 0;
+
+		editorRefreshEventMarkers();
 	}
 
 	function editorTimeShifting()
@@ -140,5 +164,26 @@ class PlayState extends FlxState
 
 		if (songTimeMS < 0) songTimeMS = 0;
 		if (songTimeMS > songLengthMS) songTimeMS = songLengthMS;
+	}
+
+	function editorRefreshEventMarkers()
+	{
+		for (sprite in editorEventMarkers)
+		{
+			editorEventMarkers.remove(sprite);
+			sprite.destroy();
+			sprite = null;
+		}
+
+		for (marker in songEventMarkers)
+		{
+			var markerSprite = new FlxSprite().makeGraphic(1, 1);
+			markerSprite.scale.set(2, timeBar.barHeight);
+			markerSprite.updateHitbox();
+
+			markerSprite.x = timeBar.barWidth * (marker.time / songLengthMS);
+
+			editorEventMarkers.add(markerSprite);
+		}
 	}
 }
