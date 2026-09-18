@@ -1,5 +1,6 @@
 package inmic;
 
+import flixel.sound.FlxSound;
 import lime.media.AudioSource;
 import flixel.math.FlxMath;
 import flixel.ui.FlxBar;
@@ -12,26 +13,16 @@ import flixel.FlxState;
 
 class PlayState extends FlxState
 {
-	var song:Sound;
-	var songSoundChannel:SoundChannel;
-	var songAudioSource:AudioSource;
+	var song:FlxSound;
 
 	var songName = 'Lead';
 	var songTime(get, null):Float;
 
-	function get_songTime():Float
-	{
-		return (songSoundChannel == null) ? 0 : ((songCompleted) ? songLength : songSoundChannel.position);
-	}
+	function get_songTime():Float return (song == null) ? 0 : song.time;
 
 	var songLength(get, null):Float;
 
-	function get_songLength():Float
-	{
-		return (song == null) ? 0 : song.length;
-	}
-
-	var songCompleted:Bool = false;
+	function get_songLength():Float return (song == null) ? 0 : song.length;
 
 	var timeBar:FlxBar;
 
@@ -39,17 +30,8 @@ class PlayState extends FlxState
 	{
 		super.create();
 
-		song = Assets.getSound('assets/songs/$songName.ogg');
-		songSoundChannel = song.play();
-
-		@:privateAccess
-		songAudioSource = songSoundChannel.__audioSource;
-
-		songAudioSource.onComplete.add(() ->
-		{
-            trace('DONE');
-			songCompleted = true;
-		});
+		FlxG.sound.list.add(song = new FlxSound().load('assets/songs/$songName.ogg'));
+		song.play();
 
 		add(timeBar = new FlxBar(0, 0, LEFT_TO_RIGHT, FlxG.width, 16, this, 'songTime', 0, songLength, false));
 		timeBar.createFilledBar(0xFF000000, 0xFF00FF00);
