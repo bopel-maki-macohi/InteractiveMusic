@@ -24,9 +24,10 @@ class Prompt extends FlxSubState
 		bg.screenCenter();
 
 		add(textInput = new FlxInputText(0, 0, Math.floor(FlxG.width * 0.9), 'Event', 16));
-		textInput.screenCenter();
-		textInput.maxChars = 47;
+		textInput.maxChars = 95;
 		textInput.multiline = false;
+        textInput.alignment = CENTER;
+		textInput.screenCenter();
 	}
 
 	override function update(elapsed:Float)
