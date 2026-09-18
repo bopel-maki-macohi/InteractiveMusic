@@ -190,13 +190,19 @@ class PlayState extends FlxState
 			sprite = null;
 		}
 
+		if (timeBar == null) return;
+
 		for (marker in songEventMarkers)
 		{
 			var markerSprite = new FlxSprite().makeGraphic(1, 1);
 			markerSprite.scale.set(2, timeBar.barHeight);
 			markerSprite.updateHitbox();
 
-			markerSprite.x = timeBar.barWidth * (marker.time / songLengthMS);
+			final fraction:Float = (marker.time) / timeBar.max;
+			final scaleInterval:Float = timeBar.barWidth / timeBar.numDivisions;
+			final interval:Float = Math.round(Std.int(fraction * timeBar.barWidth / scaleInterval) * scaleInterval);
+
+			markerSprite.x = interval;
 
 			editorEventMarkers.add(markerSprite);
 		}
