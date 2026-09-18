@@ -1,5 +1,6 @@
 package inmic;
 
+import flixel.math.FlxMath;
 import flixel.ui.FlxBar;
 import flixel.text.FlxText;
 import openfl.media.SoundChannel;
@@ -29,6 +30,7 @@ class PlayState extends FlxState
 	}
 
 	var timeBar:FlxBar;
+	var timeBarTime:Float = 0.0;
 
 	override function create()
 	{
@@ -37,7 +39,14 @@ class PlayState extends FlxState
 		song = Assets.getSound('assets/songs/$songName.ogg');
 		songSoundChannel = song.play();
 
-		add(timeBar = new FlxBar(0, 0, LEFT_TO_RIGHT, FlxG.width, 16, this, 'songTime', 0, songLength, false));
+		add(timeBar = new FlxBar(0, 0, LEFT_TO_RIGHT, FlxG.width, 16, this, 'timeBarTime', 0, songLength, false));
 		timeBar.createFilledBar(0xFF000000, 0xFF00FF00);
+	}
+
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		timeBarTime = FlxMath.lerp(timeBarTime, songTime, 0.015);
 	}
 }
