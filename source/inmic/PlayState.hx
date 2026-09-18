@@ -141,7 +141,7 @@ class PlayState extends FlxState
 
 	function editorTimeShifting()
 	{
-		var shifting = (FlxG.keys.pressed.SHIFT) ? 0.1 : (FlxG.keys.pressed.ALT) ? 0.25 : (FlxG.keys.pressed.CONTROL) ? 0.5 : 1;
+		var shifting = (FlxG.keys.pressed.SHIFT) ? 0.5 : (FlxG.keys.pressed.CONTROL) ? 0.25 : (FlxG.keys.pressed.ALT) ? 0.1 : 1;
 
 		final leftJP = FlxG.keys.anyJustPressed([A, LEFT]);
 		final rightJP = FlxG.keys.anyJustPressed([D, RIGHT]);
