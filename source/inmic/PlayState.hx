@@ -141,6 +141,9 @@ class PlayState extends FlxState
 
 	function editorTimeShifting()
 	{
+		var shifting = (FlxG.keys.pressed.CONTROL) ? 0.5 : 1;
+		if (FlxG.keys.pressed.ALT) shifting *= 2;
+
 		final leftJP = FlxG.keys.anyJustPressed([A, LEFT]);
 		final rightJP = FlxG.keys.anyJustPressed([D, RIGHT]);
 
@@ -149,13 +152,13 @@ class PlayState extends FlxState
 
 		if (editorShifting)
 		{
-			if (leftP) songTimeMS -= editorShiftMS;
-			if (rightP) songTimeMS += editorShiftMS;
+			if (leftP) songTimeMS -= editorShiftMS * shifting;
+			if (rightP) songTimeMS += editorShiftMS * shifting;
 		}
 		else
 		{
-			if (leftJP) songTimeMS -= editorMoveMS;
-			if (rightJP) songTimeMS += editorMoveMS;
+			if (leftJP) songTimeMS -= editorMoveMS * shifting;
+			if (rightJP) songTimeMS += editorMoveMS * shifting;
 
 			if (leftP || rightP) editorShiftTick += 1;
 		}
