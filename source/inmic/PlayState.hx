@@ -13,6 +13,16 @@ import flixel.FlxState;
 
 class PlayState extends FlxState
 {
+	static final editorShiftMS:Float = 1 * 1000;
+	static final editorMoveMS:Float = 5 * 1000;
+
+	var editorShiftTick:Int = 0;
+	var editorShiftTickThreshold:Int = 50;
+
+	var editorShifting(get, null):Bool;
+
+	function get_editorShifting():Bool return editorShiftTick >= editorShiftTickThreshold;
+
 	var EDITOR_MODE:Bool = false;
 
 	var PAUSED:Bool = false;
@@ -20,9 +30,11 @@ class PlayState extends FlxState
 	var song:FlxSound;
 
 	var songName = 'Lead';
-	var songTimeMS(get, null):Float;
+	var songTimeMS(get, set):Float;
 
 	function get_songTimeMS():Float return (song == null) ? 0 : song.time;
+
+	function set_songTimeMS(ms:Float):Float return (song == null) ? 0 : song.time = ms;
 
 	var songLengthMS(get, null):Float;
 
@@ -42,7 +54,6 @@ class PlayState extends FlxState
 		timeBar.createFilledBar(0xFF000000, 0xFF00FF00);
 
 		add(timeText = new FlxText());
-		timeText.screenCenter(X);
 
 		updateEditorMode();
 	}
@@ -54,12 +65,28 @@ class PlayState extends FlxState
 		if (FlxG.keys.justPressed.ESCAPE) togglePaused();
 		if (FlxG.keys.justPressed.F7) toggleEditorMode();
 
+		if (EDITOR_MODE)
+		{
+            if (FlxG.keys.justPressed.SPACE)
+            {
+                if (song.playing) song.pause();
+                else song.play();
+            }
+
+			if (!song.playing) editorTimeShifting();
+		}
+
 		timeText.text = '${songTimeMS / 1000} / ${songLengthMS / 1000}';
+		timeText.screenCenter(X);
 	}
 
 	function togglePaused()
 	{
-        if (EDITOR_MODE) return;
+		if (EDITOR_MODE)
+		{
+			PAUSED = false;
+			return;
+		}
 
 		PAUSED = !PAUSED;
 
@@ -84,5 +111,34 @@ class PlayState extends FlxState
 		updatePaused();
 
 		timeText.alpha = (EDITOR_MODE) ? 0.75 : 0.001;
+
+		editorShiftTick = 0;
+	}
+
+	function editorTimeShifting()
+	{
+		final leftJP = FlxG.keys.anyJustPressed([A, LEFT]);
+		final rightJP = FlxG.keys.anyJustPressed([D, RIGHT]);
+
+		final leftP = FlxG.keys.anyPressed([A, LEFT]);
+		final rightP = FlxG.keys.anyPressed([D, RIGHT]);
+
+		if (editorShifting)
+		{
+			if (leftP) songTimeMS -= editorShiftMS;
+			if (rightP) songTimeMS += editorShiftMS;
+		}
+		else
+		{
+			if (leftJP) songTimeMS -= editorMoveMS;
+			if (rightJP) songTimeMS += editorMoveMS;
+
+			if (leftP || rightP) editorShiftTick += 1;
+		}
+
+		if (!leftP && !rightP) editorShiftTick = 0;
+
+		if (songTimeMS < 0) songTimeMS = 0;
+		if (songTimeMS > songLengthMS) songTimeMS = songLengthMS;
 	}
 }
