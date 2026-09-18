@@ -34,6 +34,9 @@ class PlayState extends FlxState
 
 	function get_editorShifting():Bool return editorShiftTick >= editorShiftTickThreshold;
 
+	/**
+	 * TODO : I want to have these in it's own little section so multiple events can be easily seen
+	 */
 	public var editorEventMarkers(default, null):FlxSpriteContainer;
 
 	public var song(default, null):FlxSound;
