@@ -1,5 +1,7 @@
 package inmic;
 
+import inmic.ui.Prompt;
+import inmic.song.EventMarker;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteContainer;
 import flixel.sound.FlxSound;
@@ -15,36 +17,39 @@ import flixel.FlxState;
 
 class PlayState extends FlxState
 {
-	static final editorShiftMS:Float = 1 * 1000;
-	static final editorMoveMS:Float = 5 * 1000;
+	public static var instance:PlayState;
 
-	var editorShiftTick:Int = 0;
-	var editorShiftTickThreshold:Int = 50;
+	public var IN_PROMPT:Bool = false;
 
-	var editorShifting(get, null):Bool;
+	public var EDITOR_MODE:Bool = false;
+	public var PAUSED:Bool = false;
+
+	public final editorShiftMS:Float = 1 * 1000;
+	public final editorMoveMS:Float = 5 * 1000;
+	public final editorShiftTickThreshold:Int = 50;
+
+	public var editorShiftTick(default, null):Int = 0;
+
+	public var editorShifting(get, null):Bool;
 
 	function get_editorShifting():Bool return editorShiftTick >= editorShiftTickThreshold;
 
-	var editorEventMarkers:FlxSpriteContainer;
+	public var editorEventMarkers(default, null):FlxSpriteContainer;
 
-	var EDITOR_MODE:Bool = false;
+	public var song(default, null):FlxSound;
 
-	var PAUSED:Bool = false;
-
-	var song:FlxSound;
-
-	var songName = 'Lead';
-	var songTimeMS(get, set):Float;
+	public var songName(default, null):String = 'Lead';
+	public var songTimeMS(get, set):Float;
 
 	function get_songTimeMS():Float return (song == null) ? 0 : song.time;
 
 	function set_songTimeMS(ms:Float):Float return (song == null) ? 0 : song.time = ms;
 
-	var songLengthMS(get, null):Float;
+	public var songLengthMS(get, null):Float;
 
 	function get_songLengthMS():Float return (song == null) ? 0 : song.length;
 
-	var songEventMarkers = [
+	public var songEventMarkers(default, null):Array<EventMarker> = [
 		{
 			time: 2500,
 			event: 'intro'
@@ -59,12 +64,15 @@ class PlayState extends FlxState
 		}
 	];
 
-	var timeBar:FlxBar;
-	var timeText:FlxText;
+	public var timeBar(default, null):FlxBar;
+	public var timeText(default, null):FlxText;
 
 	override function create()
 	{
 		super.create();
+
+		if (instance != null) instance = null;
+		instance = this;
 
 		FlxG.sound.list.add(song = new FlxSound().load('assets/songs/$songName.ogg'));
 		song.play();
@@ -86,8 +94,10 @@ class PlayState extends FlxState
 		if (FlxG.keys.justPressed.ESCAPE) togglePaused();
 		if (FlxG.keys.justPressed.F7) toggleEditorMode();
 
-		if (EDITOR_MODE)
+		if (EDITOR_MODE && !IN_PROMPT)
 		{
+			if (FlxG.keys.justPressed.ENTER) addEventMarker();
+
 			if (FlxG.keys.justPressed.SPACE)
 			{
 				if (song.playing) song.pause();
@@ -114,7 +124,7 @@ class PlayState extends FlxState
 		updatePaused();
 	}
 
-	function updatePaused()
+	public function updatePaused()
 	{
 		if (PAUSED || EDITOR_MODE) if (song.playing) song.pause();
 		if (!PAUSED && !EDITOR_MODE) if (!song.playing) song.play();
@@ -127,7 +137,7 @@ class PlayState extends FlxState
 		updateEditorMode();
 	}
 
-	function updateEditorMode()
+	public function updateEditorMode()
 	{
 		updatePaused();
 
@@ -168,7 +178,7 @@ class PlayState extends FlxState
 		if (songTimeMS > songLengthMS) songTimeMS = songLengthMS;
 	}
 
-	function editorRefreshEventMarkers()
+	public function editorRefreshEventMarkers()
 	{
 		for (sprite in editorEventMarkers)
 		{
@@ -187,5 +197,12 @@ class PlayState extends FlxState
 
 			editorEventMarkers.add(markerSprite);
 		}
+	}
+
+	function addEventMarker()
+	{
+		IN_PROMPT = true;
+
+		openSubState(new Prompt());
 	}
 }
