@@ -1,9 +1,10 @@
 package inmic;
 
+import flixel.FlxState;
 import flixel.FlxG;
 import flixel.FlxSprite;
 
-class CTP extends FlxSprite
+class ClickToPlay extends FlxState
 {
 	override function update(elapsed:Float)
 	{

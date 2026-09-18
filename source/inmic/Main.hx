@@ -13,6 +13,12 @@ class Main extends FlxGame
 
 	public function new()
 	{
-		super(0, 0, #if (html5 && debug) CTP #else startingState #end);
+		var startState = startingState.toNextState();
+
+		#if (html5 && debug)
+		startState = () -> new ClickToPlay();
+		#end
+
+		super(0, 0, startState.getConstructor());
 	}
 }
