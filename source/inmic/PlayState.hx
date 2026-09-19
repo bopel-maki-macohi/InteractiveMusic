@@ -1,5 +1,7 @@
 package inmic;
 
+import haxe.Json;
+import openfl.net.FileReference;
 import inmic.ui.Prompt;
 import inmic.song.EventMarker;
 import flixel.FlxSprite;
@@ -52,20 +54,7 @@ class PlayState extends FlxState
 
 	function get_songLengthMS():Float return (song == null) ? 0 : song.length;
 
-	public var songEventMarkers(default, null):Array<EventMarker> = [
-		{
-			time: 2500,
-			event: 'intro'
-		},
-		{
-			time: 5000,
-			event: 'outtro'
-		},
-		{
-			time: 10000,
-			event: 'what'
-		}
-	];
+	public var songEventMarkers(default, null):Array<EventMarker> = [];
 
 	public var timeBar(default, null):FlxBar;
 	public var timeText(default, null):FlxText;
@@ -77,7 +66,8 @@ class PlayState extends FlxState
 		if (instance != null) instance = null;
 		instance = this;
 
-		FlxG.sound.list.add(song = new FlxSound().load('assets/songs/$songName.ogg'));
+		songEventMarkers = Json.parse(Assets.getText('assets/songs/$songName/events.json'));
+		FlxG.sound.list.add(song = new FlxSound().load('assets/songs/$songName/song.ogg'));
 		song.play();
 
 		add(timeBar = new FlxBar(0, 0, LEFT_TO_RIGHT, FlxG.width, 16, this, 'songTimeMS', 0, songLengthMS, false));
@@ -99,6 +89,8 @@ class PlayState extends FlxState
 
 		if (EDITOR_MODE && !IN_PROMPT)
 		{
+			if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.S) editorSave();
+
 			if (FlxG.keys.justPressed.ENTER) addEventMarker();
 
 			if (FlxG.keys.justPressed.SPACE)
@@ -213,5 +205,11 @@ class PlayState extends FlxState
 		IN_PROMPT = true;
 
 		openSubState(new Prompt());
+	}
+
+	public function editorSave()
+	{
+		var fileRef = new FileReference();
+		fileRef.save(Json.stringify(songEventMarkers, '\t'), 'events.json');
 	}
 }

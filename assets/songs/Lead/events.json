@@ -1,0 +1,14 @@
+[
+	{
+		"event": "intro",
+		"time": 2500
+	},
+	{
+		"event": "outtro",
+		"time": 5000
+	},
+	{
+		"event": "what",
+		"time": 10000
+	}
+]
