@@ -1,5 +1,6 @@
 package inmic.ui.play;
 
+import flixel.util.FlxSort;
 import flixel.FlxBasic;
 import flixel.group.FlxContainer.FlxTypedContainer;
 import flixel.FlxObject;
@@ -132,6 +133,7 @@ class EditorState extends FlxTypedContainer<FlxBasic>
 	public function editorSave()
 	{
 		var fileRef = new FileReference();
+		gameplay.songEventMarkers.sort((a, b) -> return FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
 		fileRef.save(Json.stringify(gameplay.songEventMarkers, '\t'), 'events.json');
 	}
 }
