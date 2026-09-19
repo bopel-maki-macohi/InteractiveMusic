@@ -39,11 +39,11 @@ class Prompt extends FlxSubState
 
 		if (FlxG.keys.justPressed.ENTER)
 		{
-			// PlayState.instance.songEventMarkers.push({
-			// 	time: PlayState.instance.songTimeMS,
-			// 	event: textInput.text,
-			// });
-            // PlayState.instance.editorRefreshEventMarkers();
+			PlayState.instance.gameplay.songEventMarkers.push({
+				time: PlayState.instance.gameplay.songTimeMS,
+				event: textInput.text,
+			});
+            PlayState.instance.editor.editorRefreshEventMarkers();
 
 			onClose();
 		}
@@ -51,7 +51,7 @@ class Prompt extends FlxSubState
 
 	function onClose()
 	{
-		// PlayState.instance.IN_PROMPT = false;
+		PlayState.instance.IN_PROMPT = false;
 		close();
 	}
 }
