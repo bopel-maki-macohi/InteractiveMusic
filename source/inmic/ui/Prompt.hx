@@ -1,5 +1,6 @@
 package inmic.ui;
 
+import inmic.ui.play.PlayState;
 import flixel.text.FlxInputText;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -38,11 +39,11 @@ class Prompt extends FlxSubState
 
 		if (FlxG.keys.justPressed.ENTER)
 		{
-			PlayState.instance.songEventMarkers.push({
-				time: PlayState.instance.songTimeMS,
-				event: textInput.text,
-			});
-            PlayState.instance.editorRefreshEventMarkers();
+			// PlayState.instance.songEventMarkers.push({
+			// 	time: PlayState.instance.songTimeMS,
+			// 	event: textInput.text,
+			// });
+            // PlayState.instance.editorRefreshEventMarkers();
 
 			onClose();
 		}
@@ -50,7 +51,7 @@ class Prompt extends FlxSubState
 
 	function onClose()
 	{
-		PlayState.instance.IN_PROMPT = false;
+		// PlayState.instance.IN_PROMPT = false;
 		close();
 	}
 }

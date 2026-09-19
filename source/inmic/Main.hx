@@ -7,7 +7,7 @@ class Main extends FlxGame
 {
 	public static final version = Macro.getVersion();
 
-	public static final startingState:InitialState = PlayState;
+	public static final startingState:InitialState = inmic.ui.play.PlayState;
 
 	public function new()
 	{
